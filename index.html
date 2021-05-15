@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LotusCoin ICO - DeFi project built on Binance Smart Chain #BSC</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <!-- Ion Slider -->
+  <link rel="stylesheet" href="plugins/ion-rangeslider/css/ion.rangeSlider.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
+
+  <link rel="icon" href="https://lotuscoin.org/assets/images/favicon.ico" type="image/gif" sizes="16x16">
+</head>
+<body class="hold-transition sidebar-mini" style="background: rgb(238, 238, 238) url('images/bg.png'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;">
+<!-- Site wrapper -->
+<div class="wrapper">
+    <!-- Main content -->
+  <section class="content">
+    <!-- Default box -->
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="col-sm-12 text-center">
+          <h1><span class="tokenName"></span> ICO</h1>
+          <p>
+            <span class="text-sm">Token Address:</span> <b style="word-break: break-all;" id="tokenAddress"></b>
+            <i class="fas fa-clipboard copyToClipboard" data-clipboard-target="#tokenAddress"></i>
+            <br>
+            <span class="text-sm">IDO Address:</span> <b style="word-break: break-all;" id="ido"></b>
+            <i class="fas fa-clipboard copyToClipboard" data-clipboard-target="#ido"></i>
+            <br>
+          </p>
+        </div>
+        <div class="alert alert-info alert-dismissible" style="margin-left: 5%; margin-right: 5%;">
+          <h4><i class="icon fas fa-info-circle"></i> TAX FREE !!!</h4>
+          The ICO is <b>TAX FREE</b>. No token burn and no auto LP fee.
+          The buyer will get <b>100%</b> worth of tokens he/she pays for.
+          When ICO is over, 6% burn and 6% auto LP will be implemented in Pancakeswap v2.
+        </div>
+        <div class="alert alert-warning alert-dismissible" id="testnetAlert" style="margin-left: 5%; margin-right: 5%; display: none;">
+          <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+          This is a BSC Testnet Server. Please use BSC Testnet network on your wallet to function correctly.
+        </div>
+        <div class="alert alert-warning alert-dismissible" id="providerAlert" style="margin-left: 5%; margin-right: 5%; display: none;">
+          <h5><i class="icon fas fa-exclamation-triangle"></i> Provider Not Found!</h5>
+          Please install <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Metamask Wallet</a> if you are using desktop Chrome. Or use DApp browers such as <a href="https://trustwallet.com/">Trustwallet App</a> if you are using mobile.
+        </div>
+        <div class="card" style="padding-left: 5%; padding-right: 5%; margin-left: 5%; margin-right: 5%;">
+          <div class="card-header">
+            <h1 class="card-title" style="float: unset; text-align: center;"><span class="symbol"></span> ICO</h1>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="text-sm">Remaining limit</div>
+                <p><b><span id="remainingLimit"></span> <span class="blockchainSymbol"></span></b></p>
+              </div>
+              <div class="col-sm-6">
+                <div class="text-sm">Exchange proportion</div>
+                <p>
+                  <b>1 <span class="blockchainSymbol"></span> : <span id="rate"></span> <span class="symbol"></span></b><br>
+                  <span class="text-sm">or</span><br>
+                  <b>0.01 <span class="blockchainSymbol"></span> : <span id="smallRate"></span> <span class="symbol"></span></b>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-sm-12">
+                <span class="text-sm">Your Account:</span> <label style="word-break: break-all;" for="amount" id="account"></label> <button type="button" class="btn btn-primary btn-xs" id="login" onclick="Login()">Login</button><br> 
+                <span class="text-sm">Your Balance:</span> <label for="amount"><span id="balance"></span> <span class="blockchainSymbol"></span></label>
+                <span id="hasAmountInput" style="display: none;"><br><span class="text-sm">You will get:</span> <label for="amount"><span id="amountEquivalent"></span> <span class="symbol"></span></label></span>
+                <div class="input-group">
+                  <input type="number" id="amount" class="form-control">
+                  <span class="input-group-append">
+                    <button type="button" class="btn btn-info btn-flat" onclick="Buy()">Purchase!</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <input id="range_1" type="text" name="range_1" value="">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <table class="table mt-4">
+                  <tbody>
+                    <tr>
+                      <td class="text-xs">Launch Time</td>
+                      <td class="text-sm text-right" id="openingTime"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-xs">End Time</td>
+                      <td class="text-sm text-right" id="closingTime"></td>
+                    </tr>
+                    <tr>
+                      <td class="text-xs">Total ICO Coins</td>
+                      <td class="text-sm text-right"><span id="totalSale"></span> <span class="symbol"></span></td>
+                    </tr>
+                    <tr>
+                      <td class="text-xs">Total Cap</td>
+                      <td class="text-sm text-right"><span id="cap"></span> <span class="blockchainSymbol"></span></td>
+                    </tr>
+                    <tr>
+                      <td class="text-xs">Max Purchase Limit</td>
+                      <td class="text-sm text-right"><span id="limit"></span> <span class="blockchainSymbol"></span></td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" class="text-xs">
+                        <a href="https://lotuscoin.org/" class="btn btn-primary btn-flat">Back To Homepage</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div id="loader" class="overlay dark">
+            <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+      </div>
+    </div>
+    <!-- /.card -->
+  </section>
+
+  <!-- /.content-wrapper -->
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+<!-- Ion Slider -->
+<script src="plugins/ion-rangeslider/js/ion.rangeSlider.min.js"></script>
+
+<script src="dist/js/web3.min.js"></script>
+
+<script src="dist/js/detect-provider.min.js"></script>
+
+<!-- Toastr -->
+<script src="plugins/toastr/toastr.min.js"></script>
+
+<script src="dist/js/clipboard.min.js"></script>
+
+<script>
+  var ABI=[{constant:!1,inputs:[{name:"beneficiary",type:"address"}],name:"buyTokens",outputs:[],payable:!0,stateMutability:"payable",type:"function"},{inputs:[{name:"rate",type:"uint256"},{name:"wallet",type:"address"},{name:"token",type:"address"},{name:"goal",type:"uint256"},{name:"open",type:"uint256"},{name:"close",type:"uint256"}],payable:!1,stateMutability:"nonpayable",type:"constructor"},{payable:!0,stateMutability:"payable",type:"fallback"},{anonymous:!1,inputs:[{indexed:!1,name:"prevClosingTime",type:"uint256"},{indexed:!1,name:"newClosingTime",type:"uint256"}],name:"TimedCrowdsaleExtended",type:"event"},{anonymous:!1,inputs:[{indexed:!0,name:"purchaser",type:"address"},{indexed:!0,name:"beneficiary",type:"address"},{indexed:!1,name:"value",type:"uint256"},{indexed:!1,name:"amount",type:"uint256"}],name:"TokensPurchased",type:"event"},{constant:!0,inputs:[],name:"cap",outputs:[{name:"",type:"uint256"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"capReached",outputs:[{name:"",type:"bool"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"closingTime",outputs:[{name:"",type:"uint256"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"hasClosed",outputs:[{name:"",type:"bool"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"isOpen",outputs:[{name:"",type:"bool"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"openingTime",outputs:[{name:"",type:"uint256"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"rate",outputs:[{name:"",type:"uint256"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"token",outputs:[{name:"",type:"address"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"wallet",outputs:[{name:"",type:"address"}],payable:!1,stateMutability:"view",type:"function"},{constant:!0,inputs:[],name:"weiRaised",outputs:[{name:"",type:"uint256"}],payable:!1,stateMutability:"view",type:"function"}];
+  
+  // variables used in the file, token name and symbol are just for convinience
+  var crowdsaleAddress = "0xB6856a60E6530b9021d82749827D2621431D7f96";
+  var blockchainSymbol = "BNB";
+  var tokenName = "LotusCoin";
+  var tokenSymbol = "LTSCN";
+  var explorer = "https://bscscan.com";
+  var isTestnet = false;
+  var limit = 2;
+
+  var cap = 0;
+  var weiRaised = 0;
+  var rate = 0;
+  var openingTime;
+  var closingTime;
+  var isOpen;
+  var hasClosed;
+  var token;
+
+  var slider;
+
+  var ethAddress;
+  var isAuthorised = false;
+  
+  function Login(){
+    signInMetamask();
+  }
+
+  function load() {
+    setLoading(true);
+    window.web3 = new Web3(window.ethereum);
+
+    window.contract = new window.web3.eth.Contract(ABI, crowdsaleAddress);
+
+    window.renderIDO();
+    setLoading(false);
+
+    Login();
+  }
+
+  function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+        console.error('Not found accounts');
+        $('#login').show();
+    } else {
+        isAuthorised = true;
+        ethAddress = accounts[0];
+        $('#account').html(ethAddress);
+        $('#login').hide();
+        window.web3.eth.getBalance(ethAddress, function(error,result){
+          if(error){
+            //console.log(error)
+          }else{
+            //console.log(result)
+          }
+          //console.log(result / (10**18));
+          $('#balance').html(result / (10**18));
+        });
+    }
+  }
+
+  function signInMetamask () {
+    detectEthereumProvider().then(provider => {
+      ethereum.enable().then(() => {
+        // @ts-ignore
+        if (provider !== window.ethereum) {
+          console.error('Do you have multiple wallets installed?');
+        }
+
+        if (!provider) {
+          console.error('Metamask not found');
+          return;
+        }
+
+        // MetaMask events
+        provider.on('accountsChanged', handleAccountsChanged);
+
+        provider.on('disconnect', () => {
+          console.log('disconnect');
+          isAuthorised = false;
+        });
+        
+        provider.on('chainIdChanged', chainId => console.log('chainIdChanged', chainId));
+
+        provider.request({ method: 'eth_requestAccounts' }).then(params => {
+            handleAccountsChanged(params);
+            isAuthorised = true;
+        })
+        .catch(err => {
+            isAuthorised = false;
+            if (err.code === 4001) {
+              console.error('Please connect to MetaMask.');
+            } else {
+              console.error(err);
+            }
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      $('#providerAlert').show();
+    });
+  }
+
+  function renderIDO() {
+    // Load from the blockchain
+    window.contract.methods.cap().call().then(res1 => {
+      cap = res1 / (10**18);
+      //console.log("cap:" + res / (10**18));
+      $('#cap').html(cap);
+
+      window.contract.methods.weiRaised().call().then(res2 => {
+        weiRaised = res2 / (10**18);
+        //console.log("weiRaised:" + res / (10**18));
+
+        if(typeof slider !== "undefined")
+        {
+          slider.update({
+            max : cap,
+            to : weiRaised
+          });
+        }
+
+        var remainingLimit = cap - weiRaised;
+        $('#remainingLimit').html(remainingLimit);
+        window.contract.methods.rate().call().then(res3 => {
+          rate = res3;
+          //console.log("closingTime: " + closingTime);
+          $('#rate').html(rate);
+          $('#smallRate').html(rate * 0.01);
+
+          var totalSale = rate * cap;
+          $('#totalSale').html(totalSale);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    })
+    .catch(err => {
+      setLoading(true);
+      console.log(err);
+    });
+
+    window.contract.methods.openingTime().call().then(res => {
+      openingTime = new Date(1000 * res).toUTCString();
+      //console.log("openingTime: " + res);
+      $('#openingTime').html(openingTime);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
+    window.contract.methods.closingTime().call().then(res => {
+      closingTime = new Date(1000 * res).toUTCString();
+      //console.log("closingTime: " + res);
+      $('#closingTime').html(closingTime);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
+    window.contract.methods.isOpen().call().then(res => {
+      isOpen = res;
+      //console.log("isOpen: " + isOpen);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
+    window.contract.methods.hasClosed().call().then(res => {
+      hasClosed = res;
+      //console.log("hasClosed: " + hasClosed);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
+    window.contract.methods.token().call().then(res => {
+      token = res;
+      //console.log("token: " + token);
+      $('#tokenAddress').html(token);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
+
+  function setLoading(boolean) {
+    window.loading = boolean;
+    const loader = $('#loader');
+
+    if (boolean) {
+      loader.show();
+    } else {
+      loader.hide();
+    }
+  }
+
+  function Buy() {
+    var amount = $("#amount").val();
+
+    if(!isNumeric(amount))
+      return;
+
+    console.log('Account: ', ethAddress);
+
+    // Using default gas & gasPrice
+    var details = { from: ethAddress, to: crowdsaleAddress, value: window.web3.utils.toWei(amount, 'ether') };
+    console.log(details);
+
+    setLoading(true);
+
+    window.web3.eth.sendTransaction(details)
+    .on("transactionHash", txHash => {
+      setLoading(false);
+      console.log("Payment transactionHash", txHash);
+      $(document).Toasts('create', {
+        class: 'bg-info',
+        title: 'TRANSACTION STARTED',
+        autohide: true,
+        delay: 3000,
+        body: 'Please wait while the transaction is processing. <br><a target="_blank" href="'+explorer+'/tx/'+txHash+'">'+txHash+'</a>'
+      });
+      load();
+    })
+    .on("receipt", receipt => {
+      setLoading(false);
+      console.log("on receipt", receipt);
+      $(document).Toasts('create', {
+        class: 'bg-success',
+        title: 'SUCCESS',
+        autohide: true,
+        delay: 3000,
+        body: 'Transaction successfully completed.'
+      });
+      load();
+    })
+    .on("confirmation", confirmation => {
+      setLoading(false);
+      console.log("on confirmation");
+    })
+    .on("error", error => {
+      setLoading(false);
+      console.log("on error", error);
+      $(document).Toasts('create', {
+        class: 'bg-danger',
+        title: 'TRANSACTION FAILED',
+        autohide: true,
+        delay: 3000,
+        body: 'Please check your inputs and try again.'
+      });
+      load();
+    });
+  }
+
+  function isNumeric(str) {
+    if (typeof str != "string") return false // we only process strings!  
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+          !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+  }
+
+  $(function () {
+    $('#ido').html(crowdsaleAddress);
+    $('#limit').html(limit);
+    $('.symbol').html(tokenSymbol);
+    $('.tokenName').html(tokenName);
+    $('.blockchainSymbol').html(blockchainSymbol);
+
+    /* ION SLIDER */
+    slider = $('#range_1').ionRangeSlider({
+      min     : 0,
+      max     : cap,
+      from    : 0,
+      to      : weiRaised,
+      step    : 0.01,
+      type    : 'double',
+      postfix  : blockchainSymbol,
+      from_fixed: true,  
+      to_fixed: true,
+    }).data("ionRangeSlider");
+
+    load();
+
+    if(isTestnet)
+      $('#testnetAlert').show();
+
+    $('#amount').on('input',function(e){
+      var input = $(this);
+      var val = input.val();
+
+      if(!isNumeric(val)){
+        $('#hasAmountInput').hide();
+        return;
+      }else{
+        $('#hasAmountInput').show();
+      }
+
+      $('#amountEquivalent').html(val * rate);
+    });
+  });
+</script>
+
+<script>
+  var clipboard = new ClipboardJS('.copyToClipboard');
+  clipboard.on('success', function(e) {
+      $(document).Toasts('create', {
+        class: 'bg-success',
+        title: 'Success',
+        autohide: true,
+        delay: 3000,
+        body: 'Copied to the clipboard.'
+      });
+  });
+  clipboard.on('error', function(e) {
+      console.log(e);
+  });
+</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPLH4V7ZRC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NPLH4V7ZRC');
+</script>
+</body>
+</html>
